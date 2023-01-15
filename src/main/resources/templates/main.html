@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript">
+        let uri = "ws://192.168.35.87:8888/";
+        let websocket;
+        let output;
+        let content;
+
+        let userId = prompt("what's your name?");
+
+        let sendMessageObj = {};
+
+        function init() {
+            output = document.getElementById("output");
+            content = document.getElementById("content");
+            connect()
+        }
+
+        function connect() {
+            if (!websocket) {
+                websocket = new WebSocket(uri + userId);
+                websocket.onopen = function (evt) {
+                    writeToScreen(userId + "님 반갑습니다. 채팅을 시작겠습니다.")
+                };
+                websocket.onmessage = function (evt) {
+                    var chatUser = JSON.parse(evt.data)
+                    writeToScreen(chatUser.userId + " : " + chatUser.message);
+                };
+                websocket.onerror = function (evt) {
+                    onError(evt)
+                };
+            }
+        }
+
+        function disconnect() {
+            if (websocket) {
+                websocket.close();
+                writeToScreen(userId + "님이 퇴장하셨습니다.");
+            }
+        }
+
+        function send_message() {
+            let message = content.value;
+            sendMessageObj.userId = userId;
+            sendMessageObj.message = message;
+            websocket.send(JSON.stringify(sendMessageObj));
+        }
+
+        function onError(evt) {
+            writeToScreen('ERROR: ' + evt.data);
+        }
+
+        function writeToScreen(message) {
+            var pre = document.createElement("p");
+            pre.style.wordWrap = "break-word";
+            pre.innerHTML = message;
+            output.appendChild(pre);
+        }
+
+        window.addEventListener("load", init, false);
+    </script>
+</head>
+<body onload="loaded()" onkeydown="keyDown()" onkeyup="keyUp()">
+    <!-- 메타버스 -->
+    <canvas width="1400" height="900" style="border: 2px solid black; float: left;" id="c1"></canvas>
+        <!-- 채팅 -->
+        <div style="text-align: center; float: right; border: 2px solid black; width: 15%; height: 900px; overflow-y: scroll;">
+            <div style="text-align: center;">채팅</div><br>
+            <!-- 작성란 -->
+            <form action="">
+                <input id="content" name="message" type="text" placeholder ="채팅을 시작해보세요!"><br>
+                <input onclick="send_message()" value="Send" type="button">
+                <input onclick="disconnect()" value="exit" type="button">
+            </form>
+            <!-- 표시란 -->
+            <div style="text-align: left;" id="output"></div>
+        </div>
+
+    <script>
+        let canvas; // 도화지
+        let context; // 화가
+        let imgC = "imgChar2";
+
+        let dx = 0;
+        let dy = 0;
+
+        let keycode;
+
+        let imgChar = new Image();
+        imgChar.src = "/character/mario.png";
+        let imgChar2 = new Image();
+        imgChar2.src = "/character/mario2.png";
+        let imgBg = new Image();
+        imgBg.src = "/map/cafe.png";
+
+        let x = 700, y = 900;
+        let w = 30, h = 30;
+
+        function loaded() {
+            canvas = document.getElementById("c1");
+            context = canvas.getContext("2d");
+
+            runGame();
+            alert("스터디룸에 입장하셨습니다");
+            cancelAnimationFrame(runGame);
+            window.requestAnimationFrame(runGame);
+            //setInterval(runGame);
+        }
+
+        function runGame() {
+            moveAll();
+            drawAll();
+        }
+
+        function moveAll() {
+            x += dx;
+            y += dy;
+        }
+
+        function drawAll() {
+            context.drawImage(imgBg, 0, 0, 1400, 900);
+            if (imgC == imgChar) {
+                context.drawImage(imgChar2, x-w, y-h, w*2, h*2);
+                imgC = imgChar2;
+            } else {
+                context.drawImage(imgChar, x-w, y-h, w*2, h*2);
+                imgC = imgChar;
+            }
+        }
+
+        function keyDown() {
+            keycode = event.keyCode;
+            switch(keycode) {
+                case 37:
+                    cancelAnimationFrame(runGame);
+                    requestAnimationFrame(runGame);
+                    if ( x <= 30 ) {
+                        dx = 0;
+                        break;
+                    } else if ( y <= 380 && x > 540 && x <= 1360 ) {
+                        dx = 0;
+                        break;
+                    } else {
+                        dx = -10;
+                        break;
+                    }
+                case 38:
+                    cancelAnimationFrame(runGame);
+                    requestAnimationFrame(runGame);
+                    if ( y <= 90 ) {
+                        dy = 0;
+                        break;
+                    } else if ( 550 <= x && x <= 1350 && y <= 390 ) {
+                        dy = 0;
+                        break;
+                    } else {
+                        dy = -10;
+                        break;
+                    }
+                case 39:
+                    cancelAnimationFrame(runGame);
+                    requestAnimationFrame(runGame);
+                    if ( x >= 1870 ) {
+                        dx = 0;
+                        break;
+                    } else if ( y <= 380 && x >= 540 && x < 1360 ) {
+                        dx = 0;
+                        break;
+                    } else {
+                        dx = 10;
+                        break;
+                    }
+                case 40:
+                    cancelAnimationFrame(runGame);
+                    requestAnimationFrame(runGame);
+                    if ( y >= 1050 ) {
+                        dy = 0;
+                        break;
+                    } else {
+                        dy = 10;
+                        break;
+                    }
+            }
+        }
+
+        function keyUp() {
+            keycode = event.keyCode;
+            switch(keycode) {
+                case 37:
+                case 39:
+                    dx = 0;
+                    break;
+                case 38:
+                case 40:
+                    dy = 0;
+                    break;
+            }
+        }
+    </script>
+</body>
+</html>
