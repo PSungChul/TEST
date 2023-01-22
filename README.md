@@ -6,9 +6,7 @@
 
 #### DTO 사용방식에는 여러방식이 있지만 여기서는 Entity내에 static으로 해당 Entity를 사용하는 각 DTO클래스들을 모두 구현해두어 해당 Entity를 사용하는 DTO들을 관리하기 편하게 사용하였습니다.
 
-#### 사용된 데이터베이스 : MySQL
-
-#### 사용된 데이터베이스 이름 : soju2
+#### 사용된 데이터베이스 : MySQL - soju2
 	CREATE DATABASE soju2;
 	USE soju2;
 
