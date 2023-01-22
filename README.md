@@ -7,11 +7,11 @@
 #### 사용된 데이터베이스 : MySQL
 
 #### 사용된 데이터베이스 이름 : soju2
-CREATE DATABASE soju2;
-USE soju2;
+#### CREATE DATABASE soju2;
+#### USE soju2;
 
 #### 사용된 테이블 : 
-CREATE TABLE Member (
+#### CREATE TABLE Member (
   emailId VARCHAR(50) PRIMARY KEY, #이메일 형식 아이디
 	pwd VARCHAR(255) NOT NULL, #비밀번호
 	name VARCHAR(10) NOT NULL, #이름
